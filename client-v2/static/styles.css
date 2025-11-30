@@ -4,49 +4,277 @@
 
 /* Container holding the image and the text */
 
-* {
-  box-sizing: border-box;
-}
-
-.submissions-container {
-  display: flex;
-  flex-direction: column;
-  width: 320px;
-}
-
-.contest-container {
-  margin-left: 8px;
-}
-
-.root-container {
-  display: flex;
-  width: 320px;
-}
-
-maratona {
-  display: block;
-  width: 100%;
-}
-
-body {
-  color: white;
-  font-family: Lato, Ubuntu, sans-serif;
-  font-weight: 700;
-  height: 1px;
-  background-color: #000;
-  /* overflow-y: scroll; */
-}
-
 :root {
   --row-height: 48px;
   --root-top: 0px;
   --root-top-center: calc(100vh / 2);
+  --left-side-width: 320px;
+
+  --border-radius: 4px;
+
+  --bg-color: #1a2027;
+  --main-color: #2D3840;
+  --pending-color: #E3CA5F;
+  --wrong-color: #58282E;
+  --accept-color: #264344;
+  --first-color: #1d3f68;
+  --frozen-color: #6FB3D2;
+
+  --main-text-color: #FFFFFF;
+}
+
+body {
+  color: var(--main-text-color);
+  font-family: Arial, sans-serif;
+  background-color: var(--bg-color);
+  display: flex;
+  justify-content: center;
+  min-width: min-content;
+  margin: 0px;
+}
+
+.root-container {
+  min-width: fit-content;
+  display: flex;
+  padding: 8px;
+  gap: 12px;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 .runstable {
-  position: relative;
-  margin-top: 3px;
+  z-index: 0;
 }
+
+/* ------------------------------------------------------------------------------ */
+/* Left Side - lastest Submitions */
+/* ------------------------------------------------------------------------------ */
+
+.submissions-container {
+  display: block;
+  width: var(--left-side-width);
+  min-width: var(--left-side-width);
+}
+
+.submissions-container .runstable {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 1200PX;
+  /* Set a maximum height for the tbody to enable scrolling */
+}
+
+.fixed-left-side {
+  height: calc(var(--row-height) * 6 - 2px);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  gap: 2px;
+  background-color: var(--bg-color);
+  margin: 1px;
+  z-index: 1;
+}
+
+/* Sedes Dropdown */
+.sede-dropdown {
+  position: sticky;
+  top: 0;
+  height: calc(var(--row-height) - 2px);
+  display: inline-block;
+  font-size: 14px;
+}
+
+.sede-dropdown-button {
+  width: 100%;
+  height: calc(var(--row-height) - 2px);
+  background-color: var(--main-color);
+  color: #e8eaed;
+  padding: 12px 16px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s ease;
+
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
+.sede-dropdown-button:hover {
+  background-color: #3c4043;
+}
+
+.sede-dropdown-button:focus {
+  outline: 2px solid #8ab4f8;
+  outline-offset: 2px;
+}
+
+.sede-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--main-color);
+
+  max-height: 240px;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow:
+    0 4px 8px rgb(0 0 0 / 0.12),
+    0 1px 3px rgb(0 0 0 / 0.08);
+  z-index: 10;
+  border: 1px solid #5f6368;
+}
+
+.sede-dropdown-content.show {
+  display: block;
+}
+
+.sede-dropdown-content input {
+  box-sizing: border-box;
+  padding: 10px 16px;
+  border: none;
+  border-bottom: 1px solid #5f6368;
+  font-size: 14px;
+  background-color: var(--main-color);
+  color: #e8eaed;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.sede-dropdown-content input::placeholder {
+  color: #9aa0a6;
+}
+
+.sede-dropdown-content input:focus {
+  outline: none;
+  background-color: #292a2d;
+}
+
+.sede-dropdown-content a {
+  padding: 12px 16px;
+  display: block;
+  text-decoration: none;
+  color: #e8eaed;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  border-radius: 4px;
+}
+
+.sede-dropdown-content a:hover,
+.sede-dropdown-content a:focus {
+  background-color: #3c4043;
+  outline: none;
+}
+
+.timer {
+  flex: 1;
+  align-content: center;
+  font-size: 60px;
+  font-family: "Inconsolata", "Ubuntu Mono", monospace;
+  text-align: center;
+  color: var(--main-text-color);
+  background-color: var(--main-color);
+  padding-left: 16px;
+  padding-right: 16px;
+
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.frozen {
+  color: var(--frozen-color);
+}
+
+.frozen::before {
+  content: "❄ ";
+  font-size: 60px;
+}
+
+.center {
+  --main-color: var(--pending-color);
+  color: black;
+}
+
+.changed {
+  animation: clockUpdate 1s;
+}
+
+@keyframes clockUpdate {
+  0% {
+    color: #263238;
+  }
+
+  /* 25%		{ color: green;  }
+  50%		{ color: yellow; }
+  75%	    { color: red;    } */
+  50% {
+    color: yellow;
+  }
+
+  100% {
+    color: #263238;
+  }
+}
+
+.submission-title {
+  height: var(--row-height);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 12px;
+  padding: 8px;
+  font-size: 24px;
+  background-color: var(--main-color);
+
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
+/* ------------------------------------------------------------------------------ */
+/* Right  Side - Competition Scoreboard */
+/* ------------------------------------------------------------------------------ */
+
+.contest-container {
+  display: block;
+  width: auto;
+  height: fit-content;
+}
+
+/*
+maratona {
+  display: block;
+  width: 100%;
+}
+*/
+
+.contest-container .runstable {
+  display: block;
+  position: relative;
+  width: 100%;
+  /* Set a maximum height for the tbody to enable scrolling */
+}
+
+.bg-contest-header {
+  position: sticky;
+  top: 0;
+
+  background-color: var(--bg-color);
+  margin: 1px;
+  z-index: 1;
+}
+
+.contest-header {
+  width: 100%;
+  display: flex;
+  background-color: var(--main-color);
+
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
 
 /* .runspanel {
   position: relative;
@@ -56,8 +284,20 @@ body {
 } */
 
 .revelationpanel {
+  display: block;
+  width: auto;
+  height: fit-content;
+}
+
+.revelationpanel .runstable {
+  display: block;
   position: relative;
-  top: 40px;
+  --root-top: var(--row-height);
+  width: 100%;
+}
+
+.revelationpanel .bg-contest-header {
+  top: 48px;
 }
 
 .run {
@@ -82,17 +322,51 @@ body {
   /* content:url(/static/assets/titulo-1stPhase.svg); */
   /* content:url(/static/assets/titulo-final.svg); */
   font-size: 24px;
-  max-width: 388px;
-  min-width: 288px;
-  flex-grow: 2;
+  max-width: 390px;
+  min-width: 290px;
+  align-content: center;
+  padding: 8px;
 }
 
 .time {
-  flex-grow: 2;
-  text-align: center;
+  width: 100%;
+  padding: 4px;
+}
+
+.nomeTime {
   overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: break-word;
+  overflow-wrap: break-word;
   text-overflow: ellipsis;
-  word-wrap: break-word;
+  cursor: pointer;
+}
+
+.nomeTimeTooltip {
+  visibility: hidden;
+  background-color: white;
+  color: black;
+  text-align: left;
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+  /* Posição absoluta relativa ao container */
+  position: absolute;
+  top: 100%;
+  /* aparece logo abaixo */
+  left: 0;
+  width: 300px;
+  z-index: 100;
+
+  /* Evita que o texto seja cortado */
+  white-space: normal;
+}
+
+.time:hover .nomeTimeTooltip {
+  visibility: visible;
 }
 
 .cell {
@@ -100,13 +374,9 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  text-align: center;
-  background-color: #4F5B62;
+  background-color: var(--main-color);
   margin: 1px;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #555;
+
 }
 
 .cell-content {
@@ -120,40 +390,46 @@ body {
   /* width: 40px; */
   min-width: 40px;
   max-width: 40px;
-}
-
-.center .not-tried {
-  background-color: #27333a;
-}
-
-.center .time {
-  background-color: #27333a;
-}
-
-.center .problema {
-  background-color: #27333a;
-}
-
-.center .problema {
-  background-color: #27333a;
+  text-align: center;
 }
 
 .accept {
   position: relative;
-  background-color: #305745;
+  background-color: var(--accept-color);
   animation: acceptBackground 2s 1;
 }
 
 .star {
   position: relative;
-  background-color: #305745;
+  background-color: var(--first-color);
   animation: blinkingBackground 1s 5;
 }
 
+.problem-header {
+  height: calc(var(--row-height) * 2 - 2px);
+  font-size: 28px;
+  justify-content: center;
+  border: 1px;
+  border-color: var(--bg-color);
+  margin: 1px;
+}
+
+.problem-cell {
+  text-align: center;
+  width: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+
+}
+
 .accept-img {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 28px;
+  height: 28px;
+  margin-top: 8px;
+  margin-left: auto;
+  margin-right: auto;
   background-size: cover;
   content: url("assets/balao2.svg");
   background-color: transparent;
@@ -213,14 +489,9 @@ body {
   background-color: transparent;
 }
 
-.not-tried {
-  text-align: center;
-  background-color: #4F5B62;
-}
-
 .unsolved {
   position: relative;
-  background-color: #573a41;
+  background-color: var(--wrong-color);
   animation: unsolvedBackground 2s 1;
 }
 
@@ -228,7 +499,7 @@ body {
   position: relative;
   text-align: center;
   animation: blinkingBackground 2s;
-  background-color: #F4D03F;
+  background-color: var(--pending-color);
   color: black;
 }
 
@@ -240,10 +511,8 @@ body {
   width: 100%;
   height: 100%;
   text-align: center;
-  font-weight: 700;
   font-size: 15px;
-  color: white;
-  text-shadow: 0px 1px 2px #000, 0px -1px 2px #000, 1px 0px 2px #000, -1px 0px 2px #000;
+  color: var(--main-text-color);
 }
 
 .accept-text-run {
@@ -253,10 +522,8 @@ body {
   width: 50%;
   height: 50%;
   text-align: center;
-  font-weight: 700;
   font-size: 15px;
-  color: white;
-  text-shadow: 0px 1px 2px #000, 0px -1px 2px #000, 1px 0px 2px #000, -1px 0px 2px #000;
+  color: var(--main-text-color);
 }
 
 /* Bottom right text */
@@ -307,38 +574,10 @@ body {
   font-size: 24px;
 }
 
-.submission-title {
-  /* width: 302px; */
-  /* height: 45px; */
-  background-color: #263238;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: 8px;
-  margin-bottom: 3px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #555;
-  border-radius: 5px;
-  padding: 2px;
-  font-size: 24px;
-}
+
 
 .nomeEscola {
   display: none;
-}
-
-.nomeTime {
-  font-size: 100%;
-}
-
-.longTeamName {
-  font-size: 80%;
-}
-
-.problema {
-  text-align: center;
-  font-size: 30px;
 }
 
 .colocacao {
@@ -347,17 +586,16 @@ body {
 }
 
 .cima {
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 16px;
 }
 
 .baixo {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 12px;
 }
 
 .commandpanel {
   position: fixed;
+  top: 8px;
   z-index: 1000000;
   padding: 4px;
   border-style: solid;
@@ -422,27 +660,27 @@ body {
 
 @keyframes blinkingBackground {
   0% {
-    background-color: #F4D03F;
+    background-color: var(--pending-color);
     color: black;
   }
 
   25% {
-    background-color: #00ab5e;
+    background-color: var(--accept-color);
     color: white;
   }
 
   50% {
-    background-color: #F4D03F;
+    background-color: var(--pending-color);
     color: black;
   }
 
   75% {
-    background-color: #ae2538;
+    background-color: var(--wrong-color);
     color: white;
   }
 
   100% {
-    background-color: #F4D03F;
+    background-color: var(--pending-color);
     color: black;
   }
 }
@@ -484,82 +722,7 @@ body {
   background-color: rgb(114, 89, 26);
 }
 
-.timer {
-  font-size: 60px;
-  font-family: "Inconsolata", "Ubuntu Mono", monospace;
-  text-align: center;
-  color: #ffffff;
-  text-shadow: -2pt 2pt black;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 5px;
-}
-
-.frozen {
-  border-color: #004567;
-  color: #004567;
-}
-
-.frozen::before {
-  content: "❄ ";
-  font-size: 60px;
-}
-
-.center {
-  animation: borderUpdate 5s infinite;
-}
-
-@keyframes borderUpdate {
-  0% {
-    background-color: #8888;
-  }
-
-  100% {}
-}
-
-.changed {
-  animation: clockUpdate 1s;
-}
-
-@keyframes clockUpdate {
-  0% {
-    color: #263238;
-  }
-
-  /* 25%		{ color: green;  }
-  50%		{ color: yellow; }
-  75%	    { color: red;    } */
-  50% {
-    color: yellow;
-  }
-
-  100% {
-    color: #263238;
-  }
-}
-
 /*
 .hora .minuto .segundo {
   float: left;
 } */
-
-a {
-  color: #336;
-}
-
-.sedeslink {
-  font-size: 14px;
-  font-family: "Lato";
-  padding: 2px;
-}
-
-.sedesnavigation {
-  margin: 3px;
-  margin-bottom: 10px;
-}
-
-div#runheader>.cell {
-  background-color: #263238 !important;
-}

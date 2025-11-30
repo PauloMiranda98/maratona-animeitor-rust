@@ -30,14 +30,7 @@ pub fn Problem(prob: Letter, problem: Signal<Option<data::ProblemView>>) -> impl
     let problem_content = move || {
         problem.with(|problem| match problem {
             Some(p) => (if p.solved {
-                let balao = format!("balao_{}", prob);
-                let img = if p.solved_first {
-                    "star-img"
-                } else {
-                    "accept-img"
-                };
                 view! {
-                    <div class=format!("{img} {balao}")></div>
                     <div class="accept-text cell-content">
                         <div class="cima">
                             +{number_submissions(p.submissions)}
@@ -50,7 +43,7 @@ pub fn Problem(prob: Letter, problem: Signal<Option<data::ProblemView>>) -> impl
                 .into_any()
             } else {
                 let pending = match p.pending {
-                    0 => "X".to_string(),
+                    0 => "x".to_string(),
                     1 => "?".to_string(),
                     n => format!("({})", n),
                 };
@@ -62,7 +55,7 @@ pub fn Problem(prob: Letter, problem: Signal<Option<data::ProblemView>>) -> impl
                 .into_any()
             })
             .into_any(),
-            None => { "-" }.into_any(),
+            None => { "" }.into_any(),
         })
     };
 

@@ -23,7 +23,6 @@ use crate::{
         contest::Contest,
         control_scrolling::RemoteControl,
         global_settings::{use_global_settings, SettingsPanel},
-        navigation::Navigation,
     },
 };
 
@@ -94,15 +93,16 @@ fn ProvideSede(
     original_contest: Arc<ContestFile>,
     contest_signal: Arc<ContestSignal>,
     panel_items: Arc<RunsPanelItemManager>,
-    config_contest: Arc<ConfigContest>,
+    config_contest: LocalResource<ConfigContest>,
+    provider_config_contest: Arc<ConfigContest>,
     timer: ReadSignal<(TimerData, TimerData)>,
     sede_param: Signal<QueryParams>,
 ) -> impl IntoView {
-    let titulo = use_titulo(config_contest.clone());
+    let titulo = use_titulo(provider_config_contest.clone());
     let titulo_sede = titulo.clone();
     let sede = Memo::new(move |_| {
         use_configured_sede(
-            config_contest.clone(),
+            provider_config_contest.clone(),
             titulo_sede.clone(),
             sede_param.get().sede,
         )
@@ -118,7 +118,7 @@ fn ProvideSede(
         })
     });
 
-    view! { <Contest original_contest contest_signal panel_items timer titulo sede=sede.into() /> }
+    view! { <Contest original_contest contest_signal panel_items timer titulo config_contest sede=sede.into() /> }
 }
 
 #[component]
@@ -192,14 +192,15 @@ pub fn Sedes() -> impl IntoView {
                                     contest_signal=provider.new_contest_signal.clone()
                                     panel_items=provider.runs_panel_item_manager
                                     timer
-                                    config_contest=provider.config_contest.clone()
+                                    config_contest=config_contest
+                                    provider_config_contest=provider.config_contest.clone()
                                     sede_param=query_params
                                     />
                         }
                     });
 
                     view! {
-                    <Navigation config_contest />
+                    
                     {suspend}
                 }.into_any()}
             }

@@ -122,8 +122,8 @@ pub fn Control(state: WriteSignal<State>) -> impl IntoView {
             <button on:click=move |_| { state.update(|d| d.reveal_top_n(30))}>
                 Top 30
             </button>
-            <button on:click=move |_| { state.update(|d| d.reveal_top_n(10))}>
-                Top 10
+            <button on:click=move |_| { state.update(|d| d.reveal_top_n(12))}>
+                Top 12
             </button>
             <button on:click=move |_| { state.update(|d| d.reveal_all())}>
                 All

@@ -241,6 +241,7 @@ pub fn TeamMedia(
                 if team_login == team_login_click {
                     Some(view! {
                         <div class="foto" id={foto_id.clone()} style:background-color=background_color>
+                            <TeamScoreLine team=team.clone() is_center=false.into() titulo local_placement sede />
                             <img
                                 class="foto_img"
                                 src=team_photo_location(&team_login)
@@ -248,7 +249,6 @@ pub fn TeamMedia(
                                 on:click=move |_| show.update(|s| s.clicked(&team_login_click))
                             />
                             {team_details}
-                            <TeamScoreLine team=team.clone() is_center=false.into() titulo local_placement sede />
                             <TeamAudio team_login=team_login.clone() is_resolved=is_resolved.into() show />
                         </div>
                     })

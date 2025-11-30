@@ -6,7 +6,7 @@ pub fn TeamName(escola: String, name: String) -> impl IntoView {
     view! {
         <div class="cell time">
             <div class:nomeEscola=true >{escola}</div>
-            <div class:nomeTime=true class:longTeamName=is_long >{name}</div>
+            <div class:nomeTime=true class:longTeamName=is_long >{name.clone()}</div>
         </div>
     }
 }

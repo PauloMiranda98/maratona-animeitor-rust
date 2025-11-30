@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use data::{configdata::Sede, problem_letters, ContestFile, Letter, TimerData};
+use data::{configdata::{ConfigContest, Sede}, problem_letters, ContestFile, Letter, TimerData};
 use itertools::Itertools;
 use leptos::{ev, logging::log, prelude::*};
 
@@ -15,6 +15,7 @@ use crate::{
         team_media::{use_global_photo_state, PhotoState, TeamMedia},
         team_score_line::TeamScoreLine,
         timer::Timer,
+        navigation::Navigation,
     },
 };
 
@@ -57,8 +58,18 @@ fn ContestPanelLine(
         memo_placement.with(|t| match t {
             Some(placement) => format!(
                 "top: {}; z-index: {};",
-                cell_top(*placement, &p_center.get()),
+                cell_top(*placement - 1, &p_center.get()),
                 -(*placement as i32)
+            ),
+            None => "display: none;".to_string(),
+        })
+    };
+    let next_style = move || {
+        memo_placement.with(|t| match t {
+            Some(placement) => format!(
+                "top: {}; z-index: {};",
+                cell_top(*placement - 1, &p_center.get()),
+                -(*placement as i32) + 1
             ),
             None => "display: none;".to_string(),
         })
@@ -81,21 +92,28 @@ fn ContestPanelLine(
         >
             <TeamScoreLine titulo is_center=is_center team=team.clone() sede local_placement />
         </div>
-        <TeamMedia team_login show={show_photo} team titulo local_placement sede />
+        <div class="run_box" style={next_style}>
+            <TeamMedia team_login={team_login.clone()} show={show_photo.clone()} team={team.clone()} titulo={titulo.clone()} local_placement={local_placement.clone()} sede={sede.clone()} />
+        </div>
     }
 }
 
 #[component]
 fn ContestPanelHeader(sede: Signal<Arc<Sede>>, all_problems: Vec<Letter>) -> impl IntoView {
     view! {
-        <div id="runheader" class="run">
-            <div class={move ||
-                estilo_sede(&sede.get()).iter().chain(&["cell", "titulo"]).join(" ")}>
-                {move || nome_sede(&sede.get()).to_string()}
+        <div class="bg-contest-header">
+            <div class="contest-header">
+                <div class={move ||
+                    estilo_sede(&sede.get()).iter().chain(&["problem-header titulo"]).join(" ")}>
+                    {move || nome_sede(&sede.get()).to_string()}
+                </div>
+                {all_problems.into_iter().map(|p| view! {
+                    <div class="problem-header problem-cell">
+                        <div class="problem-text">{p.to_string()}</div>
+                        <div class=format!("accept-img balao_{}", p)></div>
+                    </div>
+                }).collect_view()}
             </div>
-            {all_problems.into_iter().map(|p| view! {
-                <div class="cell problema quadrado">{p.to_string()}</div>
-            }).collect_view()}
         </div>
     }
 }
@@ -179,7 +197,7 @@ pub fn ContestPanel(
 
     let placements_contest_signal = contest_signal.clone();
 
-    let placements = Signal::derive(move || {
+    let placements: Signal<Vec<String>> = Signal::derive(move || {
         sede.with(|s| {
             placements_contest_signal.team_global_placements.with(|t| {
                 t.iter()
@@ -205,13 +223,11 @@ pub fn ContestPanel(
         center,
     );
 
+    let total = placements.with(|vec| vec.len());
+
     view! {
-        <div class="runstable">
-            <div class="run_box" style:top={move || {
-                log!("center {:?}", center.get());
-                cell_top(0, &None)}}>
-                <ContestPanelHeader sede all_problems />
-            </div>
+        <ContestPanelHeader sede all_problems />
+        <div class="runstable" style=format!("height: calc(var(--row-height) * {});", total)>
             {panel_lines}
         </div>
     }
@@ -224,6 +240,7 @@ pub fn Contest(
     panel_items: Arc<RunsPanelItemManager>,
     timer: ReadSignal<(TimerData, TimerData)>,
     titulo: Signal<Option<Arc<Sede>>>,
+    config_contest: LocalResource<ConfigContest>,
     sede: Signal<Arc<Sede>>,
 ) -> impl IntoView {
     let (center, _) = signal(None);
@@ -233,8 +250,11 @@ pub fn Contest(
     view! {
         <div class="root-container" class:is-frozen=is_frozen>
             <div class="submissions-container">
-                <Timer timer />
-                <div class="submission-title"> Últimas Submissões </div>
+                <div class="fixed-left-side">
+                    <Navigation config_contest />
+                    <Timer timer />
+                    <div class="submission-title"> Últimas Submissões </div>
+                </div>
                 <RunsPanel items=panel_items sede />
             </div>
             <div class="contest-container">

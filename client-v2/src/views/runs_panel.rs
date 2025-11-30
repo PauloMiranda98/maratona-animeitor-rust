@@ -83,8 +83,10 @@ pub fn RunsPanel(items: Arc<RunsPanelItemManager>, sede: Signal<Arc<Sede>>) -> i
             .collect_vec();
         let panel = compress_placements(wraps, placements, None.into());
 
+        let total = placements.with(|vec| vec.len());
+
         view! {
-            <div class="runstable">
+            <div class="runstable" style=format!("height: calc(var(--row-height) * {});", total)>
                 {panel}
             </div>
         }
